@@ -1,4 +1,5 @@
 # Console Graphics Engine
+Allows the user to render a screen buffer onto the console window.
 ## Structure
 - "include" folder contains the engine
 - "demos" folder showcases the capabilities of the engine
