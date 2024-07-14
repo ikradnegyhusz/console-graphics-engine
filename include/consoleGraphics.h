@@ -172,10 +172,9 @@ class graphicConsole
 			int rgb[3] = {((hexValue >> 16) & 0xFF),((hexValue >> 8) & 0xFF),((hexValue) & 0xFF)};
 			int RGB[3] = {((hexValue >> 16) & 0xFF),((hexValue >> 8) & 0xFF),((hexValue) & 0xFF)};
 			//now to determine the brightness of the color, add the RGB values together
-			int brightness = rgb[0]+rgb[1]+rgb[2] - 383; //goes from -383 to 382
+			int brightness = rgb[0]+rgb[1]+rgb[2]/3;
 			wchar_t amplifying_levels[6]={L' ',L'.',L'+',176,177,178};
-			char bright = (brightness>=0);
-			int deviation_from_mid=std::abs(brightness);
+			char bright = (brightness>=128);
 			if(bright)
 			{
 				drawChar.Attributes=color|0x000F; //foreground white
@@ -184,7 +183,7 @@ class graphicConsole
 			{
 				drawChar.Attributes=color; //foreground black
 			}
-			int level = (int)(deviation_from_mid/63);
+			int level = 5*(brightness-128)/128;
 			drawChar.Char.UnicodeChar=amplifying_levels[level];
 		}
 		
