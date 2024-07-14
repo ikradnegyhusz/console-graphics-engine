@@ -9,7 +9,7 @@ int main()
     xya player={SW/2,SH/2,0.0f};
     graphicConsole gc;
     
-    gc.createConsole(SW,SH,5,5);
+    gc.createConsole(SW,SH,6,6);
     gc.setColor(0x00FF00);
     while(1)
     {
@@ -19,6 +19,8 @@ int main()
         //controls
         if(gc.key(37)) player.a-=1;
         if(gc.key(39)) player.a+=1; 
+
+        gc.write(0,0,"test");
 
         if(topdown)
         {

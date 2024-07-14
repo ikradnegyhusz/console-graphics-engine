@@ -8,7 +8,8 @@ Allows the user to render a screen buffer onto the console window.
 - ``` int getColor(int hexValue) ``` converts hex color into a format understood by the console.
 - ``` int createConsole(int width, int height, int fontw, int fonth) ``` initializes the console class.
 - ``` void pixel(int x, int y) ``` puts a pixel onto buffer using values from ``` drawChar ``` variable.
-- ``` void character(int x, int y, char c) ``` writes a character in the specified position. (this is for writing text)
+- ``` void character(int x, int y, char c) ``` writes a character in the specified position. (this is for writing text).
+- ``` void write(int x, int y, const char* str) ``` writes a string in the specified position.
 - ``` float getFPS() ``` returns the frames displayed per second.
 - ``` void clear(int val) ``` fills the buffer with a specified int value.
 - ``` int render() ``` displays the contents of the screen buffer.

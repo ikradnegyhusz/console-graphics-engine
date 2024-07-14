@@ -118,6 +118,16 @@ class graphicConsole
 			screen[x+y*w].Char.UnicodeChar=c;
             screen[x+y*w].Attributes=0x000F; //FG white
 		}
+
+        void write(int x, int y, const char* str)
+        {
+            int i=0;
+            while(str[i]!='\0')
+            {
+                character(x+i,y,str[i]);
+                i+=1;
+            }
+        }
 		
         float getFPS()
         {
