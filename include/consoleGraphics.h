@@ -109,8 +109,9 @@ class graphicConsole
 
         void pixel(int x, int y)
         {
+            if(x<w && x>=0 && y < h && y>=0){ 
             screen[x+y*w].Char.UnicodeChar=drawChar.Char.UnicodeChar;
-            screen[x+y*w].Attributes=drawChar.Attributes;
+            screen[x+y*w].Attributes=drawChar.Attributes;}
         }
 		
 		void character(int x, int y, char c)
@@ -121,11 +122,21 @@ class graphicConsole
 
         void write(int x, int y, const char* str)
         {
-            int i=0;
+            int i=0,j=0,k=0;
             while(str[i]!='\0')
             {
-                character(x+i,y,str[i]);
+                if(str[i]=='\n')
+                {
+                    k+=1;
+                    j=0;
+                }
+                else
+                {
+                    character(x+j,y+k,str[i]);
+                    j+=1;
+                }
                 i+=1;
+                
             }
         }
 		
