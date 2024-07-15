@@ -1,7 +1,7 @@
 #include "../../include/consoleGraphics.h"
 #include "def.h"
-#define RAYNUM 120
-#define FOV 60
+#define RAYNUM 60
+#define FOV 45
 
 int main()
 {
@@ -13,7 +13,8 @@ int main()
     int nlines=readMap("map.txt",&map);
     RAY* rays=(RAY*)malloc(sizeof(RAY)*RAYNUM);
     float segment_width=(float)SW/(float)FOV;
-
+    float mod_angle_amount=(float)FOV/(float)RAYNUM;
+    float default_anglemod=-((float)FOV/2);
 
     gc.createConsole(SW,SH,13-RESOLUTION,13-RESOLUTION);
     gc.setColor(0x00FF00);
@@ -35,12 +36,13 @@ int main()
         }
         player.a=angle_limit(player.a);
         //cast rays
-        float anglemod=-(FOV/2);
+        float anglemod=default_anglemod;
         for(int i=0;i<RAYNUM;i++)
         {
             RAY r=cast_ray(player.x,player.y,player.a+anglemod,map,nlines);
+            r.d=COS(anglemod)*r.d;
             rays[i]=r;
-            anglemod+=(float)FOV/(float)RAYNUM;
+            anglemod+=mod_angle_amount;
         }
         
         //render
@@ -60,11 +62,28 @@ int main()
         }
         else
         {
+
             //3D view
-            for(int i=0;i<RAYNUM;i++)
+            
+            float dist=rays[0].d/2-RAYNUM/2*0.1;
+            V TOP_A={0,dist};
+            V TOP_B;
+            V BOTTOM_A={0,SH-dist};
+            V BOTTOM_B;
+            for(int i=1;i<RAYNUM;i++)
             {
-                draw_rect(gc,i*(segment_width-1),rays[i].d/2,segment_width,SH-rays[i].d);
+                dist=rays[i].d/2-ABS(i-RAYNUM/2)*0.1;
+                TOP_B=V{i*segment_width,dist};
+                BOTTOM_B=V{i*segment_width,SH-dist};
+                if(dist<SH/2)
+                {
+                    draw_line(gc,TOP_A,TOP_B);
+                    draw_line(gc,BOTTOM_A,BOTTOM_B);
+                }
+                TOP_A=TOP_B;
+                BOTTOM_A=BOTTOM_B;
             }
+            
         }
 
         sprintf(text_out,"player pos:\n(%f,%f)",player.x,player.y);
