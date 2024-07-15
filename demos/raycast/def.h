@@ -21,6 +21,12 @@ typedef struct
     V A,B;
 }LINE;
 
+typedef struct
+{
+    float x,y,d;
+
+}RAY;
+
 float rad(float x)
 {
     return x*PI/180;
@@ -55,6 +61,7 @@ void draw_line(graphicConsole& gc, V A, V B)
     float dx=B.x-A.x;
     float dy=B.y-A.y;
     float len=sqrt(dx*dx+dy*dy);
+    if(len==0) return;
     float ax=dx/len;
     float ay=dy/len;
     V temp={A.x,A.y};
@@ -69,6 +76,17 @@ void draw_line(graphicConsole& gc, V A, V B)
         temp_dx=temp.x-A.x;
         temp_dy=temp.y-A.y;
         temp_len=sqrt(temp_dx*temp_dx+temp_dy*temp_dy);        
+    }
+}
+
+void draw_rect(graphicConsole& gc,int x, int y, int width, int height)
+{
+    for(int i=x;i<width+x;i++)
+    {
+        for(int j=y;j<height+y;j++)
+        {
+            gc.pixel(i,j);
+        }
     }
 }
 
@@ -144,4 +162,58 @@ int readMap(const char* filepath, LINE** map)
         printf("%f %f, %f %f\n",map[i].A.x,map[i].A.y,map[i].B.x,map[i].B.y);
     }*/
     return linecount;
+}
+
+V intersection(V A, V B, V C, V D) {
+    float a1 = B.y - A.y;
+    float b1 = A.x - B.x;
+    float c1 = a1 * A.x + b1 * A.y;
+
+    float a2 = D.y - C.y;
+    float b2 = C.x - D.x;
+    float c2 = a2 * C.x + b2 * C.y;
+
+    float determinant = a1 * b2 - a2 * b1;
+
+    if (determinant == 0) {
+        return V{-1,-1};
+    } else {
+        float x = (b2 * c1 - b1 * c2) / determinant;
+        float y = (a1 * c2 - a2 * c1) / determinant;
+        return V{x, y};
+    }
+}
+
+int isOnSegment(V A, V B, V P) {
+    return (P.x <= std::max(A.x, B.x) && P.x >= std::min(A.x, B.x) &&
+            P.y <= std::max(A.y, B.y) && P.y >= std::min(A.y, B.y));
+}
+
+RAY cast_ray(float x, float y, float a, LINE* map, int nlines)
+{
+    V A={x,y};
+    V B={x+(SW+SH)*COS(a),y+(SW+SH)*SIN(a)};
+    float mindist=SW*SH;
+    V P;
+    RAY r;
+    for(int i=0;i<nlines;i++)
+    {
+        V C=map[i].A;
+        V D=map[i].B;
+        V p=intersection(A,B,C,D);
+        if(p.x==-1) continue;
+        if(!isOnSegment(A,B,p)) continue;
+        float dx=p.x-x;
+        float dy=p.y-y;
+        float dist=sqrt(dx*dx+dy*dy);
+        if(dist<mindist)
+        {
+            mindist=dist;
+            P=p;
+        }
+    }
+    r.x=P.x;
+    r.y=P.y;
+    r.d=mindist;
+    return r;
 }
